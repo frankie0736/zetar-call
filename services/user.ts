@@ -1,9 +1,10 @@
 import { CreditsAmount, CreditsTransType } from "./credit";
 import { findUserByEmail, findUserByUuid, insertUser } from "@/models/user";
+import { getIsoTimestr, getOneYearLaterTimestr } from "@/lib/time";
 
 import { User } from "@/types/user";
 import { auth } from "@/auth";
-import { getOneYearLaterTimestr } from "@/lib/time";
+import { getUniSeq } from "@/lib/hash";
 import { getUserUuidByApiKey } from "@/models/apikey";
 import { headers } from "next/headers";
 import { increaseCredits } from "./credit";
@@ -12,17 +13,21 @@ export async function saveUser(user: User) {
   try {
     const existUser = await findUserByEmail(user.email);
     if (!existUser) {
-      await insertUser(user);
+      const dbUser = {
+        ...user,
+        uuid: user.uuid || getUniSeq(),
+        created_at: getIsoTimestr(),
+      };
+      await insertUser(dbUser);
 
       // increase credits for new user, expire in one year
       await increaseCredits({
-        user_uuid: user.uuid || "",
+        user_uuid: dbUser.uuid,
         trans_type: CreditsTransType.NewUser,
         credits: CreditsAmount.NewUserGet,
         expired_at: getOneYearLaterTimestr(),
       });
     } else {
-      user.id = existUser.id;
       user.uuid = existUser.uuid;
       user.created_at = existUser.created_at;
     }

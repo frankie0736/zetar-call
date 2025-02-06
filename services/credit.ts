@@ -1,9 +1,9 @@
+import { getIsoTimestr, getOneYearLaterTimestr } from "@/lib/time";
 import { getUserValidCredits, insertCredit } from "@/models/credit";
 
 import { Credit } from "@/types/credit";
 import { UserCredits } from "@/types/user";
 import { getFirstPaidOrderByUserUuid } from "@/models/order";
-import { getIsoTimestr } from "@/lib/time";
 import { getSnowId } from "@/lib/hash";
 
 export enum CreditsTransType {
@@ -55,31 +55,19 @@ export async function decreaseCredits({
   user_uuid,
   trans_type,
   credits,
+  order_no,
+  expired_at,
 }: {
   user_uuid: string;
   trans_type: CreditsTransType;
   credits: number;
+  order_no?: string;
+  expired_at?: string;
 }) {
   try {
-    let order_no = "";
-    let expired_at = "";
-    let left_credits = 0;
-
-    const userCredits = await getUserValidCredits(user_uuid);
-    if (userCredits) {
-      for (let i = 0, l = userCredits.length; i < l; i++) {
-        const credit = userCredits[i];
-        left_credits += credit.credits;
-
-        // credit enough for cost
-        if (left_credits >= credits) {
-          order_no = credit.order_no;
-          expired_at = credit.expired_at || "";
-          break;
-        }
-
-        // look for next credit
-      }
+    const userCredits = await getUserCredits(user_uuid);
+    if (userCredits.left_credits < credits) {
+      throw new Error("credits not enough");
     }
 
     const new_credit: Credit = {
@@ -88,8 +76,8 @@ export async function decreaseCredits({
       user_uuid: user_uuid,
       trans_type: trans_type,
       credits: 0 - credits,
-      order_no: order_no,
-      expired_at: expired_at,
+      order_no: order_no || "",
+      expired_at: expired_at || getOneYearLaterTimestr(),
     };
     await insertCredit(new_credit);
   } catch (e) {

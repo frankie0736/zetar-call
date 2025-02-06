@@ -1,5 +1,6 @@
 import Blog from "@/components/blocks/blog";
 import { Blog as BlogType } from "@/types/blocks/blog";
+import { Post } from "@/types/post";
 import { getPostsByLocale } from "@/models/post";
 import { getTranslations } from "next-intl/server";
 
@@ -33,7 +34,17 @@ export default async function ({ params }: { params: { locale: string } }) {
   const blog: BlogType = {
     title: t("blog.title"),
     description: t("blog.description"),
-    items: posts,
+    items: posts.map((post: Post) => ({
+      slug: post.slug ?? "",
+      title: post.title ?? "",
+      description: post.description ?? "",
+      author_name: post.author_name ?? "",
+      author_avatar_url: post.author_avatar_url ?? "",
+      created_at: post.created_at ?? "",
+      locale: post.locale ?? "",
+      cover_url: post.cover_url ?? "",
+      content: post.content ?? "",
+    })),
     read_more_text: t("blog.read_more_text"),
   };
 

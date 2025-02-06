@@ -2,7 +2,6 @@ import {
   PostStatus,
   findPostBySlug,
   findPostByUuid,
-  insertPost,
   updatePost,
 } from "@/models/post";
 import { localeNames, locales } from "@/i18n/locale";
@@ -13,7 +12,6 @@ import { Form as FormSlotType } from "@/types/slots/form";
 import { Post } from "@/types/post";
 import { getIsoTimestr } from "@/lib/time";
 import { getUserInfo } from "@/services/user";
-import { getUuid } from "@/lib/hash";
 
 export default async function ({ params }: { params: { uuid: string } }) {
   const user = await getUserInfo();

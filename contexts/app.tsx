@@ -8,10 +8,13 @@ import {
   useState,
 } from "react";
 
-import { ContextValue } from "@/types/context";
 import { User } from "@/types/user";
 import useOneTapLogin from "@/hooks/useOneTapLogin";
 import { useSession } from "next-auth/react";
+
+interface ContextValue {
+  [propName: string]: any;
+}
 
 const AppContext = createContext({} as ContextValue);
 

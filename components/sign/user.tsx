@@ -25,7 +25,7 @@ export default function ({ user }: { user: User }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarImage src={user.avatar_url} alt={user.nickname} />
+          <AvatarImage src={user.avatar_url ?? ""} alt={user.nickname ?? ""} />
           <AvatarFallback>{user.nickname}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
