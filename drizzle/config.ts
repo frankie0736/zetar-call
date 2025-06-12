@@ -6,10 +6,10 @@ config({ path: ".env.development" });
 config({ path: ".env.local" });
 
 export default defineConfig({
-  out: "./drizzle/postgres/migration",
-  schema: "./drizzle/postgres/schema.ts",
-  dialect: "postgresql",
+  out: "./drizzle/sqlite/migration",
+  schema: "./drizzle/sqlite/schema.ts",
+  dialect: "sqlite",
   dbCredentials: {
-    url: process.env.POSTGRES_URL!,
+    url: process.env.SQLITE_URL!,
   },
 });

@@ -44,6 +44,8 @@ Makefile
 wrangler.toml
 supabase
 
+# database files
 data/*.db
+*.db
 drizzle/*/migration
 .cursor
